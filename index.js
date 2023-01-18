@@ -7,16 +7,30 @@ Practice accessing data by console.log-ing the following pieces of data note.
 
 💡 HINT: You may want to filter the data first 😉*/
 
+const finals2014 = fifaData.filter(function (item) {
+    return item.Year === 2014 && item.Stage === "Final";
+});
+console.log(finals2014);
+
 //(a) Home Team name for 2014 world cup final
+
+console.log('a',finals2014[0]['Home Team Name'])
 
 //(b) Away Team name for 2014 world cup final
 
+console.log('b', finals2014[0]["Away Team Name"])
+
 //(c) Home Team goals for 2014 world cup final
+
+console.log('c', finals2014[0]['Home Team Goals'])
 
 //(d) Away Team goals for 2014 world cup final
 
+console.log('d', finals2014[0]['Away Team Goals'])
+
 //(e) Winner of 2014 world cup final */
 
+console.log ('e', finals2014[0]["Win conditions"])
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 2: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
 Use getFinals to do the following:
@@ -26,9 +40,23 @@ Use getFinals to do the following:
 💡 HINT - you should be looking at the stage key inside of the objects
 */
 
-function getFinals(/* code here */) {
-    /* code here */
- }
+// function getFinals(fifaData) {
+//     const finalsArray = fifaData.filter(function (item){
+//         return item.Stage === 'Final'
+//     });
+//     return finalsArray
+//  }
+
+//  console.log('task 2:', getFinals(fifaData));
+
+// using ES6 Fat Arrow:
+
+function getFinals(dataArray) {
+   // Return a filtered array of games (as objects) with a Stage of "Final" 
+   return dataArray.filter((game) => game.Stage === 'Final');
+}
+// Check to see if the filtered data matches expectations
+console.log('task 2:', getFinals(fifaData))
 
 
 
@@ -38,10 +66,10 @@ Use the higher-order function called getYears to do the following:
 2. Receive a callback function as the second parameter that will take getFinals from task 2 as an argument
 3. Return an array called years containing all of the years in the getFinals data set*/
 
-function getYears(/* code here */) {
-    /* code here */
+function getYears(dataArr, cb) {
+    return cb(dataArr).map((game) => game.Year)
 }
-
+console.log('task 3:', getYears(fifaData, getFinals))
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 4: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
@@ -52,10 +80,20 @@ Use the higher-order function getWinners to do the following:
 💡 HINT: Don't worry about ties for now (Please see the README file for info on ties for a stretch goal.)
 4. Returns the names of all winning countries in an array called `winners` */ 
 
-function getWinners(/* code here */) {
-    /* code here */
+function getWinners(dataArr, cb) {
+    const finalWinnersArr = [];
+    cb(dataArr).forEach((game) => {
+        if (game['Home Team Goals'] - game['Away Team Goals'] > 0){
+            finalWinnersArr.push(game['Home Team Name']);
+        } else if (game['Home Team Goals'] - game['Away Team Goals']=== 0) {
+            finalWinnersArr.push('Neither Team');
+        }else {
+            finalWinnersArr.push(game['Away Team Name'])
+        }
+    });
+    return finalWinnersArr;
 }
-
+console.log('task 4:', getWinners(fifaData, getFinals))
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 5: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
@@ -69,10 +107,15 @@ Use the higher-order function getWinnersByYear to do the following:
 💡 HINT: the strings returned need to exactly match the string in step 4.
  */
 
-function getWinnersByYear(/* code here */) {
-    /* code here */
+function getWinnersByYear(dataArr, cb1, cb2, cb3) {
+    const yearlyFinalResultsArr = [];
+    for (let i = 0; i < cb2(dataArr, cb1).length; i++){
+        yearlyFinalResultsArr.push( `In ${cb2(dataArr, cb1)[i]}, ${cb3(dataArr, cb1)[i]} won the world cup!`)
+    } 
+    return yearlyFinalResultsArr
 }
 
+console.log('task 5:', getWinnersByYear(fifaData, getFinals, getYears, getWinners))
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 6: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
@@ -89,9 +132,14 @@ Use the higher order function `getAverageGoals` to do the following:
  
 */
 
-function getAverageGoals(/* code here */) {
-    /* code here */
+function getAverageGoals(cb) {
+    const averageGoals = cb.reduce(function( acc, item){
+        let avg = item['Home Team Goals'] + item['Away Team Goals'];
+        return acc + avg
+    }, 0)
+    return (averageGoals / cb.length).toFixed(2)
  }
+ console.log('task 6:', getAverageGoals(getFinals(fifaData)))
 
 
 
